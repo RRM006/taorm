@@ -1,0 +1,263 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.root{padding:1rem 0}
+.tabs{display:flex;gap:0;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1.5rem}
+.tab{padding:8px 16px;font-size:13px;color:var(--color-text-secondary);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none}
+.tab.on{color:var(--color-text-primary);border-bottom-color:var(--color-text-primary);font-weight:500}
+.pane{display:none}
+.pane.on{display:block}
+
+.hero{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1.25rem}
+.hero-title{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px}
+.hero-sub{font-size:13px;color:var(--color-text-secondary);line-height:1.6;margin-bottom:12px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11px;padding:3px 9px;border-radius:99px}
+.tp{background:#EEEDFE;color:#3C3489}
+.tm{background:#E1F5EE;color:#085041}
+.ts2{background:#FAEEDA;color:#633806}
+.tn{background:#EAF3DE;color:#27500A}
+.tsc{background:#FCEBEB;color:#791F1F}
+.tv{background:#E6F1FB;color:#0C447C}
+
+.section-title{font-size:12px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.04em;margin:1.25rem 0 .6rem}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;cursor:pointer;transition:border-color .15s}
+.card:hover{border-color:var(--color-border-secondary)}
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.card-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.card-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+.card-footer{margin-top:8px;font-size:11px;color:var(--color-text-tertiary)}
+
+.badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.badge{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.col-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
+.col-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px}
+.step-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.step{display:flex;gap:8px;align-items:flex-start}
+.step-num{width:20px;height:20px;border-radius:50%;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--color-text-tertiary);flex-shrink:0;margin-top:1px}
+.step-text{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+
+.table{width:100%;border-collapse:collapse;font-size:12px}
+.table th{font-weight:500;color:var(--color-text-tertiary);text-align:left;padding:6px 10px;border-bottom:0.5px solid var(--color-border-tertiary);font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+.table td{padding:8px 10px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);vertical-align:top}
+.table tr:last-child td{border-bottom:none}
+.table td:first-child{color:var(--color-text-primary);font-weight:500}
+
+.arch-label{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.layer{border-radius:var(--border-radius-md);padding:.75rem 1rem;margin-bottom:6px}
+.layer-title{font-size:13px;font-weight:500}
+.layer-sub{font-size:12px;opacity:.8;margin-top:2px;line-height:1.5}
+.l-ai{background:#EEEDFE;border:0.5px solid #AFA9EC}
+.l-ai .layer-title{color:#3C3489}
+.l-ai .layer-sub{color:#534AB7}
+.l-kern{background:#E1F5EE;border:0.5px solid #5DCAA5}
+.l-kern .layer-title{color:#085041}
+.l-kern .layer-sub{color:#0F6E56}
+.l-sec{background:#FCEBEB;border:0.5px solid #F09595}
+.l-sec .layer-title{color:#791F1F}
+.l-sec .layer-sub{color:#A32D2D}
+.l-user{background:#FAEEDA;border:0.5px solid #EF9F27}
+.l-user .layer-title{color:#633806}
+.l-user .layer-sub{color:#854F0B}
+.arrow-down{text-align:center;font-size:18px;color:var(--color-text-tertiary);margin:2px 0;line-height:1}
+
+.ask-btn{font-size:12px;padding:5px 12px;cursor:pointer;margin-top:12px}
+</style>
+
+<div class="root">
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden">AI-Integrated OS Project Blueprint for CSE 323</h2>
+
+<div class="tabs">
+  <button class="tab on" onclick="showTab('overview')">Project overview</button>
+  <button class="tab" onclick="showTab('modules')">4 core modules</button>
+  <button class="tab" onclick="showTab('syscalls')">System calls</button>
+  <button class="tab" onclick="showTab('arch')">Architecture</button>
+  <button class="tab" onclick="showTab('plan')">Week plan</button>
+</div>
+
+<div id="tab-overview" class="pane on">
+  <div class="hero">
+    <div class="hero-title">AI-Aware OS Resource Manager (AIORM)</div>
+    <div class="hero-sub">A kernel-level simulation where an AI/ML prediction layer advises the OS scheduler, memory manager, and security monitor — replacing fixed rules with adaptive, learned policies. Runs on Linux using system calls, /proc, cgroups, and eBPF hooks.</div>
+    <div class="tags">
+      <span class="tag tp">Process scheduling</span>
+      <span class="tag tm">Memory management</span>
+      <span class="tag tsc">Security</span>
+      <span class="tag tn">Network management</span>
+      <span class="tag tv">Industry-standard</span>
+    </div>
+  </div>
+
+  <div class="section-title">Why this project hits every requirement</div>
+  <div class="cards-grid">
+    <div class="card" onclick="sendPrompt('Explain more about AI-driven CPU scheduling in my OS project')">
+      <div class="card-head"><div class="icon" style="background:#EEEDFE"><i class="ti ti-cpu" style="font-size:16px;color:#3C3489" aria-hidden="true"></i></div><div class="card-title">AI replaces fixed scheduling rules</div></div>
+      <div class="card-desc">Traditional schedulers use static priorities. Your AI model predicts future CPU burst time, dynamically adjusting time slices — just like Linux CFS, but adaptive.</div>
+      <div class="badge-row"><span class="badge">SCHED_setattr syscall</span><span class="badge">ML prediction</span></div>
+    </div>
+    <div class="card" onclick="sendPrompt('Explain AI-driven memory management in my OS project')">
+      <div class="card-head"><div class="icon" style="background:#E1F5EE"><i class="ti ti-stack" style="font-size:16px;color:#085041" aria-hidden="true"></i></div><div class="card-title">Predictive memory prefetching</div></div>
+      <div class="card-desc">AI model predicts which pages a process will need next and prefetches them, reducing page fault rate. Optimized across device types (low RAM mobile vs server).</div>
+      <div class="badge-row"><span class="badge">madvise() syscall</span><span class="badge">mmap()</span></div>
+    </div>
+    <div class="card" onclick="sendPrompt('Explain AI-based anomaly detection for security in my OS project')">
+      <div class="card-head"><div class="icon" style="background:#FCEBEB"><i class="ti ti-shield-lock" style="font-size:16px;color:#791F1F" aria-hidden="true"></i></div><div class="card-title">AI anomaly detection (security)</div></div>
+      <div class="card-desc">Monitor syscall patterns of every process. AI model flags anomalous behavior (privilege escalation, unusual I/O) in real time — acts as a lightweight IDS inside the OS.</div>
+      <div class="badge-row"><span class="badge">ptrace() / eBPF</span><span class="badge">seccomp</span></div>
+    </div>
+    <div class="card" onclick="sendPrompt('Explain AI-based deadlock prediction in my OS project')">
+      <div class="card-head"><div class="icon" style="background:#FAEEDA"><i class="ti ti-arrows-shuffle" style="font-size:16px;color:#633806" aria-hidden="true"></i></div><div class="card-title">Deadlock prediction + prevention</div></div>
+      <div class="card-desc">Instead of running Banker's Algorithm every cycle, an AI model learns resource request patterns and predicts deadlock risk, triggering prevention before it happens.</div>
+      <div class="badge-row"><span class="badge">Resource allocation graph</span><span class="badge">ML classifier</span></div>
+    </div>
+    <div class="card" onclick="sendPrompt('Explain AI-based disk scheduling in my OS project')">
+      <div class="card-head"><div class="icon" style="background:#EAF3DE"><i class="ti ti-device-floppy" style="font-size:16px;color:#27500A" aria-hidden="true"></i></div><div class="card-title">AI-guided disk scheduling</div></div>
+      <div class="card-desc">Replaces SSTF/SCAN with a model that learns access patterns per workload, predicting future disk requests to minimize seek time — adapts to SSD vs HDD.</div>
+      <div class="badge-row"><span class="badge">io_uring syscall</span><span class="badge">Pattern learning</span></div>
+    </div>
+    <div class="card" onclick="sendPrompt('Explain device-aware optimization in my OS project')">
+      <div class="card-head"><div class="icon" style="background:#E6F1FB"><i class="ti ti-devices" style="font-size:16px;color:#0C447C" aria-hidden="true"></i></div><div class="card-title">Device-aware optimization</div></div>
+      <div class="card-desc">One key feature optimized per device class: aggressive memory compression on mobile, max throughput on server, balanced on desktop — AI policy switches at runtime.</div>
+      <div class="badge-row"><span class="badge">cgroups v2</span><span class="badge">sysctl tuning</span></div>
+    </div>
+  </div>
+  <button class="ask-btn" onclick="sendPrompt('What tech stack should I use for the AIORM project?')">What tech stack should I use? ↗</button>
+</div>
+
+<div id="tab-modules" class="pane">
+  <div class="section-title">High priority — core modules</div>
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:#EEEDFE"><i class="ti ti-cpu" style="font-size:16px;color:#3C3489" aria-hidden="true"></i></div><div class="card-title">Module 1 — AI CPU scheduler</div></div>
+      <div class="card-desc">Intercept process scheduling decisions. Train a lightweight ML model (decision tree or online linear model) on CPU burst history. Feed predictions into a custom scheduling policy via SCHED_setattr.</div>
+      <div class="badge-row"><span class="badge">User goal: fast apps</span><span class="badge">System goal: low idle waste</span></div>
+      <div class="card-footer">Syscalls: sched_setattr, getrusage, clock_gettime</div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:#E1F5EE"><i class="ti ti-stack" style="font-size:16px;color:#085041" aria-hidden="true"></i></div><div class="card-title">Module 2 — predictive memory manager</div></div>
+      <div class="card-desc">Monitor page access patterns via /proc/pid/smaps. AI predicts next working set. Call madvise(MADV_WILLNEED) to prefetch. On memory pressure, AI decides which pages to reclaim first.</div>
+      <div class="badge-row"><span class="badge">User goal: no lag</span><span class="badge">System goal: low page faults</span></div>
+      <div class="card-footer">Syscalls: madvise, mmap, mlock, mincore</div>
+    </div>
+  </div>
+  <div class="section-title">High priority — security module</div>
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:#FCEBEB"><i class="ti ti-shield-lock" style="font-size:16px;color:#791F1F" aria-hidden="true"></i></div><div class="card-title">Module 3 — AI syscall anomaly detector</div></div>
+      <div class="card-desc">Trace every process's syscall sequence using ptrace() or eBPF. Build a normal-behavior model (n-gram or LSTM on syscall IDs). Flag sequences that deviate — covering privilege escalation, data exfiltration attempts, and rootkit patterns. Also predicts and prevents deadlocks using resource graph + ML.</div>
+      <div class="badge-row"><span class="badge">User goal: safe system</span><span class="badge">System goal: no breaches</span></div>
+      <div class="card-footer">Syscalls: ptrace, seccomp, prctl — or eBPF for zero overhead</div>
+    </div>
+  </div>
+  <div class="section-title">Medium priority — network module</div>
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-head"><div class="icon" style="background:#EAF3DE"><i class="ti ti-network" style="font-size:16px;color:#27500A" aria-hidden="true"></i></div><div class="card-title">Module 4 — AI network QoS manager</div></div>
+      <div class="card-desc">Monitor per-process network usage via /proc/net. AI model classifies traffic (interactive vs bulk) and uses Linux tc (traffic control) to prioritize. Predicts congestion and pre-throttles bandwidth hogs before they saturate the link.</div>
+      <div class="badge-row"><span class="badge">User goal: smooth streaming</span><span class="badge">System goal: fair bandwidth</span></div>
+      <div class="card-footer">Syscalls: socket, setsockopt — Linux tc via netlink</div>
+    </div>
+  </div>
+  <button class="ask-btn" onclick="sendPrompt('Give me starter code for the AI CPU scheduler module')">Get starter code for Module 1 ↗</button>
+</div>
+
+<div id="tab-syscalls" class="pane">
+  <div class="section-title">System calls used per module</div>
+  <div class="col-card" style="margin-bottom:10px">
+    <table class="table">
+      <thead><tr><th>Module</th><th>Syscall / API</th><th>What it does in your project</th></tr></thead>
+      <tbody>
+        <tr><td>CPU scheduler</td><td>sched_setattr()</td><td>Set custom scheduling policy + priority for a process based on AI prediction</td></tr>
+        <tr><td>CPU scheduler</td><td>getrusage()</td><td>Read CPU burst time used by process — training data for the AI model</td></tr>
+        <tr><td>CPU scheduler</td><td>clock_gettime()</td><td>High-precision timing for burst measurement</td></tr>
+        <tr><td>Memory manager</td><td>madvise()</td><td>Tell kernel to prefetch or drop pages — AI decision output</td></tr>
+        <tr><td>Memory manager</td><td>mincore()</td><td>Check which pages are currently in RAM — model input feature</td></tr>
+        <tr><td>Memory manager</td><td>mmap() / mlock()</td><td>Map and pin memory regions; test prefetch vs demand paging</td></tr>
+        <tr><td>Security</td><td>ptrace()</td><td>Intercept every syscall a process makes — build syscall trace for anomaly model</td></tr>
+        <tr><td>Security</td><td>seccomp()</td><td>Block flagged syscalls after AI identifies anomalous pattern</td></tr>
+        <tr><td>Security</td><td>prctl()</td><td>Set process capabilities and sandbox boundaries</td></tr>
+        <tr><td>Disk I/O</td><td>io_uring</td><td>Async I/O — intercept and reorder disk requests per AI prediction</td></tr>
+        <tr><td>Network</td><td>setsockopt()</td><td>Apply QoS settings to sockets based on AI traffic classification</td></tr>
+        <tr><td>Monitoring</td><td>/proc filesystem</td><td>Read per-process CPU, memory, I/O stats — live feed to all AI models</td></tr>
+        <tr><td>Monitoring</td><td>eBPF (optional)</td><td>Zero-overhead kernel hook — production-grade syscall tracing</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <button class="ask-btn" onclick="sendPrompt('Show me C code to intercept syscalls with ptrace for the security module')">Show me ptrace() code example ↗</button>
+</div>
+
+<div id="tab-arch" class="pane">
+  <div class="arch-label">System architecture — layers</div>
+  <div class="layer l-user"><div class="layer-title">User space — applications</div><div class="layer-sub">Normal processes: web browser, database, game. They make system calls normally — unaware of AI layer below.</div></div>
+  <div class="arrow-down">↓</div>
+  <div class="layer l-ai"><div class="layer-title">AI decision layer (your main contribution)</div><div class="layer-sub">4 lightweight ML models: CPU burst predictor, page access predictor, syscall anomaly detector, traffic classifier. Trained online from /proc data. Written in C + a small Python inference engine or pure C decision tree.</div></div>
+  <div class="arrow-down">↓</div>
+  <div class="layer l-kern"><div class="layer-title">Kernel interface layer</div><div class="layer-sub">System calls: sched_setattr, madvise, ptrace/eBPF, io_uring, netlink/tc. AI decisions translated into actual kernel calls. cgroups v2 for hard resource limits as safety net.</div></div>
+  <div class="arrow-down">↓</div>
+  <div class="layer l-sec"><div class="layer-title">Security enforcement layer</div><div class="layer-sub">seccomp filters applied based on AI anomaly scores. Deadlock detection via resource allocation graph + ML risk score. Alert + auto-kill if threat score exceeds threshold.</div></div>
+  <div class="arrow-down">↓</div>
+  <div class="layer l-user" style="background:#F1EFE8;border-color:#B4B2A9"><div class="layer-title" style="color:#444441">Hardware — CPU / RAM / Disk / NIC</div><div class="layer-sub" style="color:#5F5E5A">Physical resources being managed and optimized.</div></div>
+
+  <div class="section-title" style="margin-top:1.25rem">Device optimization strategy (one feature, 3 device classes)</div>
+  <div class="cols">
+    <div class="col-card">
+      <div class="col-title">Mobile / low RAM device</div>
+      <div class="step-list">
+        <div class="step"><div class="step-num">1</div><div class="step-text">AI model aggressively reclaims idle process memory</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">madvise(MADV_FREE) on background app pages</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">Smaller ML model (decision tree, not LSTM)</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text">Target: 30% fewer OOM kills vs baseline</div></div>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-title">Server / high-core machine</div>
+      <div class="step-list">
+        <div class="step"><div class="step-num">1</div><div class="step-text">AI maximizes CPU utilization, zero idle cores</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">Predictive prefetch fills all available RAM</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">Full LSTM model — power not a concern</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text">Target: 20% throughput gain vs CFS baseline</div></div>
+      </div>
+    </div>
+  </div>
+  <button class="ask-btn" onclick="sendPrompt('Draw a detailed architecture diagram for the AIORM project')">Generate full architecture diagram ↗</button>
+</div>
+
+<div id="tab-plan" class="pane">
+  <div class="section-title">Implementation roadmap</div>
+  <div class="col-card">
+    <table class="table">
+      <thead><tr><th>Week</th><th>What to build</th><th>Deliverable</th></tr></thead>
+      <tbody>
+        <tr><td>Week 1–2</td><td>Setup + process monitor: read /proc, collect CPU/memory stats per process in real time</td><td>Working C daemon that prints live resource usage</td></tr>
+        <tr><td>Week 3–4</td><td>Module 1 — AI CPU scheduler: train decision tree on burst history, call sched_setattr</td><td>Benchmark: AI scheduler vs round-robin (show lower avg wait time)</td></tr>
+        <tr><td>Week 5–6</td><td>Module 2 — memory manager: mincore() to read page state, madvise() for prefetch/drop</td><td>Chart: page fault rate AI-managed vs baseline</td></tr>
+        <tr><td>Week 7–8</td><td>Module 3 — security: ptrace syscall tracer + n-gram anomaly model + seccomp kill</td><td>Demo: inject a fake malicious process, watch it get blocked</td></tr>
+        <tr><td>Week 9</td><td>Module 4 — network QoS: /proc/net traffic reader + tc priority rules</td><td>Demo: interactive process gets bandwidth over bulk download</td></tr>
+        <tr><td>Week 10</td><td>Device tuning: test same code on high/low RAM config, measure per-device gains</td><td>Comparison table: mobile vs server config metrics</td></tr>
+        <tr><td>Week 11–12</td><td>Integration, dashboard UI, report writing, final benchmarks</td><td>Full project demo + written report</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="section-title">What makes this industry-standard</div>
+  <div class="cards-grid">
+    <div class="card"><div class="card-title" style="margin-bottom:4px">Real kernel interfaces</div><div class="card-desc">Uses actual Linux syscalls (ptrace, eBPF, io_uring, cgroups v2) — the same ones used in production at Google, Meta, and AWS.</div></div>
+    <div class="card"><div class="card-title" style="margin-bottom:4px">Measurable outcomes</div><div class="card-desc">Every module has a clear metric: page fault rate, CPU wait time, anomaly detection accuracy, bandwidth fairness index.</div></div>
+    <div class="card"><div class="card-title" style="margin-bottom:4px">AI as a policy engine</div><div class="card-desc">AI doesn't replace the kernel — it advises it. This is how Google's Borg, Linux's ML scheduler patches, and AWS Nitro work.</div></div>
+  </div>
+  <button class="ask-btn" onclick="sendPrompt('Write me the full project report outline for AIORM CSE 323')">Generate full project report outline ↗</button>
+</div>
+</div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.getElementById('tab-'+id).classList.add('on');
+  event.target.classList.add('on');
+}
+</script>

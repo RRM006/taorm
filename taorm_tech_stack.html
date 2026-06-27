@@ -1,0 +1,369 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.root{padding:1rem 0;font-family:var(--font-sans)}
+.tabs{display:flex;gap:0;border-bottom:0.5px solid var(--border);margin-bottom:1.5rem}
+.tab{padding:8px 16px;font-size:13px;color:var(--text-secondary);cursor:pointer;border:none;border-bottom:2px solid transparent;margin-bottom:-0.5px;background:none;transition:all .15s}
+.tab.on{color:var(--text-primary);border-bottom-color:var(--text-primary);font-weight:500}
+.pane{display:none}.pane.on{display:block}
+
+.layer-stack{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
+.layer{border-radius:12px;padding:.9rem 1.1rem;border:0.5px solid}
+.layer-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.layer-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.layer-title{font-size:13px;font-weight:500}
+.layer-sub{font-size:12px;opacity:.75;margin-left:2px}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-size:11px;padding:3px 9px;border-radius:99px;font-family:var(--font-mono)}
+
+.l-user{background:#EEEDFE;border-color:#AFA9EC}
+.l-user .layer-title,.l-user .layer-sub{color:#3C3489}
+.l-user .pill{background:#CCC9F4;color:#26215C}
+.l-user .layer-icon{background:#CCC9F4;color:#3C3489}
+
+.l-ai{background:#E1F5EE;border-color:#5DCAA5}
+.l-ai .layer-title,.l-ai .layer-sub{color:#085041}
+.l-ai .pill{background:#9FE1CB;color:#04342C}
+.l-ai .layer-icon{background:#9FE1CB;color:#085041}
+
+.l-sys{background:#FAEEDA;border-color:#EF9F27}
+.l-sys .layer-title,.l-sys .layer-sub{color:#633806}
+.l-sys .pill{background:#FAC775;color:#412402}
+.l-sys .layer-icon{background:#FAC775;color:#633806}
+
+.l-kern{background:#E6F1FB;border-color:#85B7EB}
+.l-kern .layer-title,.l-kern .layer-sub{color:#0C447C}
+.l-kern .pill{background:#B5D4F4;color:#042C53}
+.l-kern .layer-icon{background:#B5D4F4;color:#0C447C}
+
+.l-hw{background:#F1EFE8;border-color:#B4B2A9}
+.l-hw .layer-title,.l-hw .layer-sub{color:#444441}
+.l-hw .pill{background:#D3D1C7;color:#2C2C2A}
+.l-hw .layer-icon{background:#D3D1C7;color:#444441}
+
+.arrow{text-align:center;font-size:20px;color:var(--text-muted);line-height:1.2;margin:-2px 0}
+
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.card{background:var(--surface-2);border:0.5px solid var(--border);border-radius:12px;padding:.9rem 1.1rem}
+.card-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.card-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.card-title{font-size:13px;font-weight:500;color:var(--text-primary)}
+.card-desc{font-size:12px;color:var(--text-secondary);line-height:1.5}
+.card-pkg{margin-top:6px;font-size:11px;font-family:var(--font-mono);color:var(--text-muted)}
+
+.table{width:100%;border-collapse:collapse;font-size:12px}
+.table th{font-weight:500;color:var(--text-muted);text-align:left;padding:6px 8px;border-bottom:0.5px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+.table td{padding:7px 8px;border-bottom:0.5px solid var(--border);color:var(--text-secondary);vertical-align:top}
+.table tr:last-child td{border-bottom:none}
+.table td:first-child{color:var(--text-primary);font-family:var(--font-mono);font-size:11px}
+.table td:nth-child(2){color:var(--text-secondary)}
+
+.sec-label{font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin:1.25rem 0 .6rem}
+
+.do-dont{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.do-card{background:#E1F5EE;border:0.5px solid #5DCAA5;border-radius:12px;padding:.9rem}
+.dont-card{background:#FCEBEB;border:0.5px solid #F09595;border-radius:12px;padding:.9rem}
+.do-title{font-size:12px;font-weight:500;color:#085041;margin-bottom:8px}
+.dont-title{font-size:12px;font-weight:500;color:#791F1F;margin-bottom:8px}
+.do-item,.dont-item{font-size:12px;line-height:1.6;margin-bottom:4px}
+.do-item{color:#0F6E56}.dont-item{color:#A32D2D}
+
+.install-box{background:var(--surface-1);border:0.5px solid var(--border);border-radius:12px;padding:.9rem 1.1rem;margin-top:10px}
+.install-title{font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:6px}
+.install-code{font-size:12px;font-family:var(--font-mono);color:var(--text-primary);line-height:1.8;white-space:pre-wrap;word-break:break-all}
+
+.ask-btn{font-size:12px;padding:5px 12px;margin-top:12px;cursor:pointer}
+</style>
+
+<div class="root">
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden">Tech stack for TAORM on Arch Linux laptop with 12GB RAM</h2>
+<div class="tabs">
+  <button class="tab on" onclick="sw('stack')">Full stack</button>
+  <button class="tab" onclick="sw('permodule')">Per module</button>
+  <button class="tab" onclick="sw('install')">Arch install</button>
+  <button class="tab" onclick="sw('dodont')">Do / don't</button>
+</div>
+
+<div id="t-stack" class="pane on">
+  <div class="layer-stack">
+    <div class="layer l-user">
+      <div class="layer-head">
+        <div class="layer-icon"><i class="ti ti-terminal-2" aria-hidden="true"></i></div>
+        <div><div class="layer-title">Dashboard + CLI</div><div class="layer-sub">what you see and interact with</div></div>
+      </div>
+      <div class="pills">
+        <span class="pill">Python 3 curses</span>
+        <span class="pill">libnotify</span>
+        <span class="pill">journalctl</span>
+        <span class="pill">matplotlib (benchmarks)</span>
+      </div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="layer l-ai">
+      <div class="layer-head">
+        <div class="layer-icon"><i class="ti ti-brain" aria-hidden="true"></i></div>
+        <div><div class="layer-title">AI / ML layer</div><div class="layer-sub">all four prediction models</div></div>
+      </div>
+      <div class="pills">
+        <span class="pill">C — decision tree (CPU)</span>
+        <span class="pill">C — Markov chain (memory)</span>
+        <span class="pill">C — n-gram hash table (security)</span>
+        <span class="pill">Python scikit-learn — one-class SVM</span>
+        <span class="pill">C — online linear regression (I/O)</span>
+        <span class="pill">numpy (feature vectors)</span>
+      </div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="layer l-sys">
+      <div class="layer-head">
+        <div class="layer-icon"><i class="ti ti-server-2" aria-hidden="true"></i></div>
+        <div><div class="layer-title">System / daemon layer</div><div class="layer-sub">the main C daemon</div></div>
+      </div>
+      <div class="pills">
+        <span class="pill">C11 (gcc / clang)</span>
+        <span class="pill">POSIX threads (pthreads)</span>
+        <span class="pill">epoll — event loop</span>
+        <span class="pill">timerfd + signalfd</span>
+        <span class="pill">eventfd — module IPC</span>
+        <span class="pill">systemd sd_notify</span>
+        <span class="pill">TOML config parser</span>
+        <span class="pill">make (build)</span>
+      </div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="layer l-kern">
+      <div class="layer-head">
+        <div class="layer-icon"><i class="ti ti-cpu" aria-hidden="true"></i></div>
+        <div><div class="layer-title">Kernel interface layer</div><div class="layer-sub">system calls + eBPF</div></div>
+      </div>
+      <div class="pills">
+        <span class="pill">sched_setattr / setpriority</span>
+        <span class="pill">madvise / mincore / mlock</span>
+        <span class="pill">ptrace / seccomp / prctl</span>
+        <span class="pill">ioprio_set / io_uring</span>
+        <span class="pill">eBPF via libbpf</span>
+        <span class="pill">bcc (Python eBPF loader)</span>
+        <span class="pill">netlink socket (tc)</span>
+        <span class="pill">/proc + /sys filesystem</span>
+        <span class="pill">cgroups v2</span>
+        <span class="pill">zram</span>
+      </div>
+    </div>
+    <div class="arrow">↓</div>
+    <div class="layer l-hw">
+      <div class="layer-head">
+        <div class="layer-icon"><i class="ti ti-device-laptop" aria-hidden="true"></i></div>
+        <div><div class="layer-title">Your hardware</div><div class="layer-sub">Arch Linux laptop, 12 GB RAM</div></div>
+      </div>
+      <div class="pills">
+        <span class="pill">x86-64 CPU</span>
+        <span class="pill">12 GB RAM</span>
+        <span class="pill">NVMe SSD</span>
+        <span class="pill">Battery + AC</span>
+        <span class="pill">Thermal sensors</span>
+      </div>
+    </div>
+  </div>
+  <button class="ask-btn" onclick="sendPrompt('Give me starter code for the TAORM main daemon loop in C')">Get daemon starter code ↗</button>
+</div>
+
+<div id="t-permodule" class="pane">
+  <div class="sec-label">Module 1 — CPU scheduler</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-top"><div class="card-icon" style="background:#EEEDFE;color:#3C3489"><i class="ti ti-code" aria-hidden="true"></i></div><div class="card-title">C11</div></div>
+      <div class="card-desc">Main language. Burst measurement, decision tree, sched_setattr calls, resource allocation graph for deadlock.</div>
+      <div class="card-pkg">gcc -O2 -std=c11</div>
+    </div>
+    <div class="card">
+      <div class="card-top"><div class="card-icon" style="background:#E1F5EE;color:#085041"><i class="ti ti-chart-dots" aria-hidden="true"></i></div><div class="card-title">getrusage + clock_gettime</div></div>
+      <div class="card-desc">POSIX calls to measure per-process CPU burst time. Training data for the decision tree model.</div>
+      <div class="card-pkg">sys/resource.h, time.h</div>
+    </div>
+    <div class="card">
+      <div class="card-top"><div class="card-icon" style="background:#FAEEDA;color:#633806"><i class="ti ti-topology-star" aria-hidden="true"></i></div><div class="card-title">eBPF (libbpf)</div></div>
+      <div class="card-desc">Attach to futex tracepoint to detect deadlock wait-chains between processes. Zero overhead vs ptrace.</div>
+      <div class="card-pkg">pacman -S libbpf</div>
+    </div>
+  </div>
+
+  <div class="sec-label">Module 2 — Memory manager</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-top"><div class="card-icon" style="background:#E1F5EE;color:#085041"><i class="ti ti-stack-2" aria-hidden="true"></i></div><div class="card-title">C + /proc parser</div></div>
+      <div class="card-desc">Parse /proc/[pid]/smaps, /proc/meminfo. Implement Markov chain in pure C — no external ML library.</div>
+      <div class="card-pkg">stdlib.h, stdio.h</div>
+    </div>
+    <div class="card">
+      <div class="card-top"><div class="card-icon" style="background:#EEEDFE;color:#3C3489"><i class="ti ti-compress" aria-hidden="true"></i></div><div class="card-title">zram (kernel module)</div></div>
+      <div class="card-desc">Compressed swap in RAM. TAORM sets it up at startup: modprobe zram, set lz4 algorithm, swapon at highest priority.</div>
+      <div class="card-pkg">modprobe zram (built-in)</div>
+    </div>
+    <div class="card">
+      <div class="card-top"><div class="card-icon" style="background:#FAEEDA;color:#633806"><i class="ti ti-file-analytics" aria-hidden="true"></i></div><div class="card-title">madvise + mincore</div></div>
+      <div class="card-desc">Core syscalls — mincore() reads page residency, madvise(MADV_FREE/WILLNEED) acts on AI prediction.</div>
+      <div class="card-pkg">sys/mman.h</div>
+    </div>
+  </div>
+
+  <div class="sec-label">Module 3 — Security monitor</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-top"><div class="card-icon" style="background:#FCEBEB;color:#791F1F"><i class="ti ti-circle-dot" aria-hidden="true"></i></div><div class="card-title">eBPF via bcc</div></div>
+      <div class="card-desc">Primary tracer — attaches a tracepoint to sys_enter. Writes syscall ID + PID to a perf ring buffer. Near-zero overhead.</div>
+      <div class="card-pkg">pacman -S bcc python-bcc</div>
+    </div>
+    <div class="card">
+      <div class="card-top"><div class="card-icon" style="background:#EEEDFE;color:#3C3489"><i class="ti ti-lock" aria-hidden="true"></i></div><div class="card-title">seccomp + prctl</div></div>
+      <div class="card-desc">Apply syscall filter to flagged processes. libseccomp makes writing filter rules in C clean and safe.</div>
+      <div class="card-pkg">pacman -S libseccomp</div>
+    </div>
+    <div class="card">
+      <div class="card-top"><div class="card-icon" style="background:#E1F5EE;color:#085041"><i class="ti ti-chart-scatter" aria-hidden="true"></i></div><div class="card-title">scikit-learn (one-class SVM)</div></div>
+      <div class="card-desc">Threat classifier trained on normal syscall patterns. Exported as a Python subprocess — C daemon queries it over stdin/stdout pipe.</div>
+      <div class="card-pkg">pacman -S python-scikit-learn</div>
+    </div>
+  </div>
+
+  <div class="sec-label">Module 4 — I/O manager</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-top"><div class="card-icon" style="background:#E6F1FB;color:#0C447C"><i class="ti ti-device-floppy" aria-hidden="true"></i></div><div class="card-title">ioprio_set syscall</div></div>
+      <div class="card-desc">Directly sets I/O scheduling class (RT / BE / IDLE) and level per PID. The primary control knob for Module 4.</div>
+      <div class="card-pkg">linux/ioprio.h</div>
+    </div>
+    <div class="card">
+      <div class="card-top"><div class="card-icon" style="background:#EAF3DE;color:#27500A"><i class="ti ti-network" aria-hidden="true"></i></div><div class="card-title">iproute2 (tc via netlink)</div></div>
+      <div class="card-desc">Traffic control for network QoS. TAORM uses AF_NETLINK socket to add/modify tc qdisc rules without shelling out.</div>
+      <div class="card-pkg">pacman -S iproute2</div>
+    </div>
+    <div class="card">
+      <div class="card-top"><div class="card-icon" style="background:#FAEEDA;color:#633806"><i class="ti ti-arrows-shuffle" aria-hidden="true"></i></div><div class="card-title">io_uring</div></div>
+      <div class="card-desc">Async I/O ring — used to monitor I/O completion events across processes without blocking. Linux 5.1+, Arch has it by default.</div>
+      <div class="card-pkg">liburing (pacman -S liburing)</div>
+    </div>
+  </div>
+  <button class="ask-btn" onclick="sendPrompt('Show me C code for the eBPF syscall tracer in TAORM Module 3')">Get eBPF tracer code ↗</button>
+</div>
+
+<div id="t-install" class="pane">
+  <div class="sec-label">Step 1 — core build tools</div>
+  <div class="install-box">
+    <div class="install-code">sudo pacman -S base-devel linux-headers clang cmake git</div>
+  </div>
+
+  <div class="sec-label">Step 2 — kernel interface tools</div>
+  <div class="install-box">
+    <div class="install-code">sudo pacman -S bcc python-bcc libbpf libseccomp liburing iproute2</div>
+  </div>
+
+  <div class="sec-label">Step 3 — Python AI / monitoring layer</div>
+  <div class="install-box">
+    <div class="install-code">sudo pacman -S python python-numpy python-scikit-learn python-psutil python-matplotlib</div>
+  </div>
+
+  <div class="sec-label">Step 4 — system monitoring and benchmarking</div>
+  <div class="install-box">
+    <div class="install-code">sudo pacman -S lm_sensors powertop stress-ng perf procps-ng</div>
+  </div>
+
+  <div class="sec-label">Step 5 — notifications + systemd dev library</div>
+  <div class="install-box">
+    <div class="install-code">sudo pacman -S libnotify systemd-libs</div>
+  </div>
+
+  <div class="sec-label">Step 6 — verify eBPF works on your kernel</div>
+  <div class="install-box">
+    <div class="install-code">sudo python /usr/share/bcc/tools/execsnoop
+# should print new process executions — if it works, your kernel supports eBPF tracing</div>
+  </div>
+
+  <div class="sec-label">Step 7 — enable thermal sensors</div>
+  <div class="install-box">
+    <div class="install-code">sudo modprobe coretemp    # Intel
+sudo modprobe k10temp     # AMD
+sudo sensors-detect       # auto-detect and configure
+sensors                   # verify — should show CPU core temps</div>
+  </div>
+
+  <div class="sec-label">Step 8 — verify cgroups v2 (should already be active on Arch)</div>
+  <div class="install-box">
+    <div class="install-code">cat /sys/fs/cgroup/cgroup.controllers
+# expected output: cpuset cpu io memory hugetlb pids rdma misc</div>
+  </div>
+
+  <button class="ask-btn" onclick="sendPrompt('Write the Makefile for the TAORM project')">Generate the Makefile ↗</button>
+</div>
+
+<div id="t-dodont" class="pane">
+  <div class="sec-label">Language choices</div>
+  <div class="do-dont">
+    <div class="do-card">
+      <div class="do-title">✓ Do this</div>
+      <div class="do-item">Write the daemon, all modules, and AI models in C11</div>
+      <div class="do-item">Use Python only for scikit-learn SVM and the curses dashboard</div>
+      <div class="do-item">Use eBPF (libbpf / bcc) for syscall tracing</div>
+      <div class="do-item">Use libseccomp for writing seccomp filters cleanly</div>
+      <div class="do-item">Use liburing for async I/O monitoring</div>
+    </div>
+    <div class="dont-card">
+      <div class="dont-title">✗ Avoid this</div>
+      <div class="dont-item">Don't write a kernel module — too risky, not needed</div>
+      <div class="dont-item">Don't use TensorFlow or PyTorch — way too heavy for 12 GB</div>
+      <div class="dont-item">Don't use Go or Rust for the daemon — C gives direct syscall access</div>
+      <div class="dont-item">Don't use ptrace as primary tracer — too slow; eBPF is better</div>
+      <div class="dont-item">Don't shell out to run tools (e.g. os.system("ionice")) — use syscalls directly</div>
+    </div>
+  </div>
+
+  <div class="sec-label">AI model choices</div>
+  <div class="do-dont">
+    <div class="do-card">
+      <div class="do-title">✓ Right size for laptop</div>
+      <div class="do-item">Decision tree (depth 8) for CPU — fits in 2 KB, < 0.2ms inference</div>
+      <div class="do-item">3rd-order Markov chain for memory — < 100 KB, handles temporal patterns well</div>
+      <div class="do-item">5-gram hash table for security baseline — O(1) lookup per syscall</div>
+      <div class="do-item">One-class SVM (scikit-learn) for threat classification — < 500 KB model</div>
+      <div class="do-item">Online linear regression for I/O — 6 floats, updates in nanoseconds</div>
+    </div>
+    <div class="dont-card">
+      <div class="dont-title">✗ Too heavy for this machine</div>
+      <div class="dont-item">Don't use LSTM / RNN — needs GPU or wastes too much CPU</div>
+      <div class="dont-item">Don't use transformer models — 100 MB+ just for the model file</div>
+      <div class="dont-item">Don't use random forest (100 trees) — overkill latency for OS decisions</div>
+      <div class="dont-item">Don't batch-retrain from scratch — use online/incremental updates only</div>
+      <div class="dont-item">Don't write models to disk every cycle — only on daemon shutdown</div>
+    </div>
+  </div>
+
+  <div class="sec-label">Arch-specific choices</div>
+  <div class="do-dont">
+    <div class="do-card">
+      <div class="do-title">✓ Arch-native approach</div>
+      <div class="do-item">Log to journald via sd_journal_send — integrates with journalctl</div>
+      <div class="do-item">Install as a systemd service with proper unit file</div>
+      <div class="do-item">Use a pacman hook to restart after kernel upgrades</div>
+      <div class="do-item">Read config from /etc/taorm/taorm.conf (standard Arch convention)</div>
+      <div class="do-item">Store model state in /var/lib/taorm/ between reboots</div>
+    </div>
+    <div class="dont-card">
+      <div class="dont-title">✗ Non-Arch patterns</div>
+      <div class="dont-item">Don't hardcode Ubuntu paths (/etc/default/, apt-specific layouts)</div>
+      <div class="dont-item">Don't use SysV init scripts — Arch is systemd-only</div>
+      <div class="dont-item">Don't depend on AppArmor profiles — Arch doesn't ship AppArmor by default</div>
+      <div class="dont-item">Don't pin Python versions — Arch is rolling, use whatever python3 is current</div>
+      <div class="dont-item">Don't use snap or flatpak packages for dependencies</div>
+    </div>
+  </div>
+  <button class="ask-btn" onclick="sendPrompt('Show me the full project directory structure and Makefile for TAORM')">Get project structure ↗</button>
+</div>
+</div>
+
+<script>
+function sw(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.getElementById('t-'+id).classList.add('on');
+  event.target.classList.add('on');
+}
+</script>
