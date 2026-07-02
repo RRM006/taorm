@@ -1,98 +1,94 @@
 # Current Task
 
-**Last updated:** 2026-06-27
+**Last updated:** 2026-07-02
 
 ---
 
 ## Where We Are
 
-The project memory system is set up (agent_docs/ created). You now understand what TAORM
-is, what you need to build, how to present it, and what topics to learn. The design docs
-are complete. No code exists yet. The Arch laptop has 30GB free and an AMD processor.
+Phase 0 (Environment Setup) and Phase 1 (Sensor Layer + Daemon Skeleton) are **done**.
+Now moving to **Phase 2: Thermal-Aware CPU Scheduler**.
 
 ## What To Do RIGHT NOW
 
-**Phase 0: Environment Setup** — Install the tools TAORM needs on your Arch laptop.
+**Phase 2: Thermal-Aware CPU Scheduler** — Build the scheduler module that adjusts
+process scheduling priorities based on thermal state and power source.
 
-This MUST be done on your actual Arch laptop, not on this Windows machine. Open a
-terminal on your Arch laptop and run these commands one by one.
+### Architecture
 
-### Step 1: Update the system
-
-```bash
-sudo pacman -Syu
+```
+taormd (epoll loop) ──timerfd→ [every 500ms/1s]
+    │
+    ├── sensors_read()                          ← from Phase 1
+    │
+    └── scheduler_tick(sensor_data_t *data)     ← NEW
+              │
+              ├── determine_thermal_zone(temp) → COOL/WARM/HOT/CRITICAL/EMERGENCY
+              ├── classify_processes() → classify each PID as FOREGROUND / COMPILE / BACKGROUND
+              ├── compute_urgency(pid, zone, power_source) → score 0.0–1.0
+              └── apply_policy(pid, urgency) → sched_setattr / setpriority / SIGSTOP
 ```
 
-Type `Y` and press Enter if it asks to confirm.
+### Files to create/modify in `~/Desktop/taorm/`
 
-### Step 2: Install build tools
+| File | Action | Purpose |
+|------|--------|---------|
+| `src/scheduler.h` | Create | Scheduler interface |
+| `src/scheduler.c` | Create | Thermal zone logic, process classification, sched_setattr |
+| `src/proc.h` | Create | /proc reader interface (per-process stats) |
+| `src/proc.c` | Create | Read /proc/[pid]/stat, cmdline, status for process classification |
+| `Makefile` | Modify | Add scheduler.o, proc.o to SRC |
+| `config/taorm.conf` | Modify | Add scheduler thresholds |
 
-```bash
-sudo pacman -S base-devel linux-headers git cmake
-```
+### Thermal Zones (from design doc)
 
-### Step 3: Install kernel interface tools
+| Zone | Temp Range | Action |
+|------|-----------|--------|
+| COOL | < 65°C | Normal scheduling, no intervention |
+| WARM | 65–75°C | Background processes get lower nice value (-5) |
+| HOT | 75–82°C | Pre-empt non-interactive background jobs, log thermal pressure |
+| CRITICAL | 82–88°C | Only foreground + system processes get CPU time; others paused via SIGSTOP |
+| EMERGENCY | > 88°C | Emergency SIGSTOP on all non-essential processes |
 
-```bash
-sudo pacman -S bcc python-bcc libbpf libseccomp liburing iproute2
-```
+### Process Classification
 
-### Step 4: Install Python AI layer
+Read `/proc/[pid]/` to classify processes:
+- **FOREGROUND** — has active terminal (read /proc/[pid]/stat session leader, or check
+  /proc/[pid]/status for the process with foreground PID via `focused` heuristics)
+  For now: treat shell, IDE, browser as foreground based on cmdline matching
+- **COMPILE** — cmdline matches make, gcc, g++, clang, rustc, cargo, cmake, ninja
+- **BACKGROUND** — everything else (system services, indexers, etc.)
 
-```bash
-sudo pacman -S python python-numpy python-scikit-learn python-psutil python-matplotlib
-```
+### Syscalls Used
 
-### Step 5: Install monitoring tools
+| Syscall | Purpose |
+|---------|---------|
+| `sched_setattr(2)` | Apply SCHED_DEADLINE, SCHED_FIFO, SCHED_IDLE |
+| `sched_getattr(2)` | Read current scheduling parameters |
+| `setpriority(2)` | Adjust nice value for non-RT processes |
+| `kill(SIGSTOP/SIGCONT)` | Pause/resume processes in emergency zones |
 
-```bash
-sudo pacman -S lm_sensors powertop stress-ng procps-ng
-```
-
-### Step 6: Verify eBPF works
-
-```bash
-sudo python /usr/share/bcc/tools/execsnoop
-```
-
-Should print process executions in real time. Press Ctrl+C to stop.
-If it fails, search "Arch Wiki eBPF" for troubleshooting.
-
-### Step 7: Verify thermal sensors
-
-```bash
-sudo modprobe k10temp
-sensors
-```
-
-Should show AMD core temperatures. If nothing shows, run `sudo sensors-detect`
-and say yes to all prompts, then run `sensors` again.
-
-### Step 8: Verify cgroups v2
+### First Integration
 
 ```bash
-cat /sys/fs/cgroup/cgroup.controllers
-```
+# Build the scheduler into taormd
+make && sudo ./taormd --foreground --interval 1
 
-Expected: `cpuset cpu io memory hugetlb pids rdma misc`
+# Test: run stress-ng in another terminal
+stress-ng --cpu 4 --timeout 30s
 
-### Step 9: Create the project directory structure
-
-```bash
-cd ~/Desktop
-mkdir -p taorm/{src/ai,src/bpf,python,config,systemd,tests}
-cd taorm
-touch Makefile README.md
+# Watch: taormd should detect thermal zones, adjust process priorities
 ```
 
 ## Done Means
 
-- All 9 steps completed without errors
-- `sensors` shows CPU temperature
-- `execsnoop` runs and prints output
-- `cat /sys/fs/cgroup/cgroup.controllers` shows controllers
+- `make` compiles without warnings
+- `./taormd --foreground` shows thermal zone and process classifications
+- Running `stress-ng --cpu 4` while taormd runs shows priority changes in journald
+- `sched_setattr` calls are logged (don't need to verify effectiveness yet — Phase 2
+  is about building the mechanism, Phase 6/7 is for benchmark validation)
 
 ## After This
 
-Come back here, report which steps succeeded and which failed.
-Update changelog.md, then we move to Phase 1 (Sensor Layer + Daemon).
+Report results, update changelog, then Phase 2 → Done.
+Move to Phase 3 (Memory Pressure Manager).

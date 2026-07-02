@@ -77,3 +77,39 @@ When a decision is revisited and changed, add a new ADR and mark the old one as 
 - **Rejected:** Loadable kernel module (LKM) — too risky for a course project,
   requires root, hard to debug, unnecessary for our goals.
 - **Status:** Accepted
+
+---
+
+## ADR-0007 — 2026-07-02 — epoll + timerfd + signalfd event loop
+
+- **Decision:** Use epoll to multiplex timerfd (periodic polling) and signalfd
+  (signal handling) in a single-threaded event loop
+- **Why:** Single-threaded avoids locking, race conditions, and context-switch
+  overhead. timerfd integrates with epoll — no busy-waiting. signalfd converts
+  signals into fd events that fit naturally in the epoll pattern.
+- **Rejected:** Multi-threaded (mutex complexity, harder to debug), sleep-based
+  polling (can't handle signals cleanly), signal() handlers (interrupt epoll_wait
+  with EINTR).
+- **Status:** Accepted
+
+---
+
+## ADR-0008 — 2026-07-02 — Open sysfs files once, keep fd across reads
+
+- **Decision:** Open sysfs files in sensors_init() and keep the fd. Each read()
+  calls lseek() to reset position.
+- **Why:** sysfs files are virtual — open/close per read adds unnecessary syscalls.
+  Holding fds open is standard for monitoring daemons.
+- **Rejected:** fopen/fclose per read (slower), reading via shell commands
+  (popening cat/sensors).
+- **Status:** Accepted
+
+---
+
+## ADR-0009 — 2026-07-02 --foreground flag for development
+
+- **Decision:** Add --foreground flag that prints JSON to stdout (default: journald).
+- **Why:** During development, tailing journalctl is slow. JSON to stdout allows
+  piping, redirecting, and quick testing.
+- **Rejected:** Always-journald (hard to debug), always-stdout (breaks systemd service).
+- **Status:** Accepted

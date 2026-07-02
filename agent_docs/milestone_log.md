@@ -21,16 +21,16 @@ Big-picture status. Update when a module's state changes.
 ## Phases
 
 ### Phase 0 — Environment Setup
-- **Status:** Not started
+- **Status:** Done
 - **Done means:** All packages installed, eBPF works, sensors work, cgroups v2 active
-- **Started:** —
-- **Completed:** —
+- **Started:** 2026-07-02
+- **Completed:** 2026-07-02
 
 ### Phase 1 — Sensor Layer + Daemon Skeleton
-- **Status:** Not started
+- **Status:** Done
 - **Done means:** taormd starts, reads all sensors, prints structured logs to journald
-- **Started:** —
-- **Completed:** —
+- **Started:** 2026-07-02
+- **Completed:** 2026-07-02
 
 ### Phase 2 — Module 1: Thermal-Aware CPU Scheduler
 - **Status:** Not started
@@ -73,8 +73,8 @@ Big-picture status. Update when a module's state changes.
 ## Overall Progress
 
 ```
-Phase 0  [                    ] 0%
-Phase 1  [                    ] 0%
+Phase 0  [####################] 100%
+Phase 1  [####################] 100%
 Phase 2  [                    ] 0%
 Phase 3  [                    ] 0%
 Phase 4  [                    ] 0%
